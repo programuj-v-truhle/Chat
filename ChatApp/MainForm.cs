@@ -145,7 +145,8 @@ namespace ChatApp
             catch (SocketException)
             {
                 // Nelze naslouchat, tak umožni pouze připojování k jiným
-                Listen = null;   
+                Listen = null;
+                MessageBox.Show(String.Format("Port {0} je již obsazen, aplikace se může chovat jen jako klient", Port));
             }
         }
 
@@ -156,9 +157,16 @@ namespace ChatApp
             
             // Vezmi první dostupnou IP adresu zadaného cíle
             IPAddress MyClientAddr = Dns.GetHostAddresses(textHost.Text)[0];
-
             Client = new TcpClient();
-            Client.Connect(MyClientAddr, Port);
+
+            try
+            {
+                Client.Connect(MyClientAddr, Port); 
+            }
+            catch (SocketException)
+            {
+                MessageBox.Show(String.Format("Nepodařilo se připojit k serveru {0}", textHost.Text));
+            }
 
             RefreshConnectedState();
         }
